@@ -5,26 +5,47 @@ export default function Home() {
   const [messages, setMessages] = useState([]);
   const [detectedLang, setDetectedLang] = useState("");
   const [selectedLang, setSelectedLang] = useState("fr");
-  const [showChat, setShowChat] = useState(false); // Hide chat initially
+  const [showChat, setShowChat] = useState(false);
+
+  const languageMap = {
+    en: "English",
+    fr: "French",
+    es: "Spanish",
+    pt: "Portuguese",
+    ru: "Russian",
+    tr: "Turkish",
+    unknown: "Unknown",
+  };
 
   async function handleTranslate() {
     if (!inputText.trim()) return;
+    setShowChat(true);
 
-    setShowChat(true); // Show chat when translating for the first time
-
-    // Add user message to chat
     const newMessages = [...messages, { text: inputText, type: "user" }];
     setMessages(newMessages);
     setInputText("");
 
-    // Detect Language
     const detected = await detectLanguage(inputText);
     if (detected) {
-      setDetectedLang(detected);
+      setDetectedLang(languageMap[detected] || "Unknown");
       const translatedText = await translateText(inputText, detected, selectedLang);
       if (translatedText) {
-        setMessages([...newMessages, { text: translatedText, type: "bot" }]); // Add translation to chat
+        setMessages([...newMessages, { text: translatedText, type: "bot" }]);
       }
+    }
+  }
+
+  async function handleSummarize() {
+    if (!inputText.trim()) return;
+    setShowChat(true);
+
+    const newMessages = [...messages, { text: inputText, type: "user" }];
+    setMessages(newMessages);
+    setInputText("");
+
+    const summary = await summarizeText(inputText);
+    if (summary) {
+      setMessages([...newMessages, { text: summary, type: "bot" }]);
     }
   }
 
@@ -49,9 +70,18 @@ export default function Home() {
     }
   }
 
+  async function summarizeText(text) {
+    try {
+      const summarizer = await self.ai.summarizer.create();
+      return await summarizer.summarize(text);
+    } catch (error) {
+      console.error("Summarization failed", error);
+      return "";
+    }
+  }
+
   return (
-    <div className="flex flex-col h-screen lg:w-[70%]  p-2 rounded-2xl bg-blue-950">
-      {/* Chat Area (Hidden by default) */}
+    <div className="flex flex-col h-screen lg:w-[70%] p-2 rounded-2xl bg-blue-950">
       {showChat && (
         <div className="flex-1 overflow-y-auto border rounded p-2 bg-blue-700">
           {messages.map((msg, index) => (
@@ -64,12 +94,14 @@ export default function Home() {
         </div>
       )}
 
-      {/* Input and Translate Button */}
       <div className="mt-4 flex flex-col items-end ">
-        {/* Prompt Text */}
         <p className="text-blue-300 text-[0.8rem] sm:text-2xl text-center lg:text-2xl mb-2 w-full">
           Tell me what you’d like me to translate or summarize!
         </p>
+
+        {detectedLang && (
+          <p className="text-green-300 text-lg text-center mb-2">Detected Language: {detectedLang}</p>
+        )}
 
         <select
           value={selectedLang}
@@ -77,11 +109,11 @@ export default function Home() {
           className="border-blue-400 border-[0.01rem] p-2 bg-blue-900 w-full lg:w-[30%] sm:w-[50%] text-white rounded mb-2"
         >
           <option value="en">English</option>
-          <option value="pt">Portuguese</option>
+          <option value="fr">French</option>
           <option value="es">Spanish</option>
+          <option value="pt">Portuguese</option>
           <option value="ru">Russian</option>
           <option value="tr">Turkish</option>
-          <option value="fr">French</option>
         </select>
 
         <div className="flex w-full">
@@ -89,15 +121,39 @@ export default function Home() {
             className="flex-1 p-2 border-[0.01rem] border-blue-400 text-blue-50 rounded"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault(); // Prevents adding a new line
+                inputText.length > 150 ? handleSummarize() : handleTranslate();
+              }
+            }}
             placeholder="Type your text..."
           />
+        </div>
+
+        {inputText.length > 150 ? (
+          <div className="flex space-x-2 mt-2">
+            <button
+              onClick={handleSummarize}
+              className="bg-blue-950 hover:bg-blue-800 border-[0.01rem] border-blue-400 text-white p-2 rounded"
+            >
+              Summarize
+            </button>
+            <button
+              onClick={handleTranslate}
+              className="bg-blue-950 hover:bg-blue-800 border-[0.01rem] border-blue-400 text-white p-2 rounded"
+            >
+              Translate
+            </button>
+          </div>
+        ) : (
           <button
             onClick={handleTranslate}
-            className="ml-2 bg-blue-950 hover:bg-blue-800 border-[0.01rem] border-blue-400 text-white p-2 rounded"
+            className="mt-2 bg-blue-950 hover:bg-blue-800 border-[0.01rem] border-blue-400 text-white p-2 rounded"
           >
             Translate
           </button>
-        </div>
+        )}
       </div>
     </div>
   );
