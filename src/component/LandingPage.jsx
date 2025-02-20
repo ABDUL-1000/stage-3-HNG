@@ -1,4 +1,4 @@
-import { FaLanguage, FaFileAlt, FaGlobe, FaArrowRight } from 'react-icons/fa';
+import { FaLanguage, FaFileAlt, FaGlobe, FaRocket } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 export default function LandingPage() {
@@ -7,9 +7,15 @@ export default function LandingPage() {
       {/* Navbar */}
       <nav className="bg-blue-600 text-white p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">AI Text Processor</h1>
-        <div className="space-x-4">
+        <div className="space-x-4 flex ">
           <a href="#about" className="hover:underline">About</a>
-          <a href="#get-started" className="hover:underline">Get Started</a>
+          <Link to="/api">
+          <div className='flex'>
+          <button className="get-started-btn">
+            <FaRocket /> Get Started
+          </button>
+          </div>
+        </Link>
         </div>
       </nav>
       
@@ -19,12 +25,12 @@ export default function LandingPage() {
         <p className="text-lg mb-6 max-w-xl">
           Detect languages, translate text, and summarize content instantly with our AI-driven tool.
         </p>
-        <Link href={"/api"} className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+        {/* <Link href={"/api"} className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
        
         
           Get Started <FaArrowRight />
       
-        </Link>
+        </Link> */}
       </header>
       
       {/* About Section */}

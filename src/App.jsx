@@ -1,20 +1,19 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Home from './component/Api'
-import LandingPage from './component/LandingPage'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LandingPage from "./component/LandingPage";
+import Api from "./component/Api";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-    <div className='p-2 bg-blue-950'>
-      <LandingPage/>
-    </div>
-    </>
-  )
+    <Router>
+      <Routes>
+        {/* Default route */}
+        <Route path="/" element={<LandingPage />} />
+        
+        {/* Route for API page */}
+        <Route path="/api" element={<Api />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
