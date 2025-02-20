@@ -135,13 +135,13 @@ export default function Home() {
           <div className="flex space-x-2 mt-2">
             <button
               onClick={handleSummarize}
-              className="bg-blue-950 hover:bg-blue-800 border-[0.01rem] border-blue-400 text-white p-2 rounded"
+              className="bg-blue-950 hover:bg-blue-800  border-[0.01rem] border-blue-400 text-white p-2 rounded"
             >
               Summarize
             </button>
             <button
               onClick={handleTranslate}
-              className="bg-blue-950 hover:bg-blue-800 border-[0.01rem] border-blue-400 text-white p-2 rounded"
+              className="bg-blue-950 hover:bg-blue-800  border-[0.01rem] border-blue-400 text-white p-2 rounded"
             >
               Translate
             </button>
