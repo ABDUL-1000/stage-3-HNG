@@ -3,6 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import Home from './component/Api'
+import LandingPage from './component/LandingPage'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -10,8 +11,7 @@ function App() {
   return (
     <>
     <div className='p-2 bg-blue-950'>
-
-   <Home/>
+      <LandingPage/>
     </div>
     </>
   )
