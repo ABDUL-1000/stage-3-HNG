@@ -50,7 +50,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col h-screen lg:w-[70%] lg:p-2 rounded-2xl bg-blue-950">
+    <div className="flex flex-col h-screen lg:w-[70%]  p-2 rounded-2xl bg-blue-950">
       {/* Chat Area (Hidden by default) */}
       {showChat && (
         <div className="flex-1 overflow-y-auto border rounded p-2 bg-blue-700">
@@ -65,16 +65,16 @@ export default function Home() {
       )}
 
       {/* Input and Translate Button */}
-      <div className="mt-4 flex flex-col items-end">
+      <div className="mt-4 flex flex-col items-end ">
         {/* Prompt Text */}
-        <p className="text-blue-300 text-lg mb-2 text-left w-full">
+        <p className="text-blue-300 text-[0.8rem] sm:text-2xl text-center lg:text-2xl mb-2 w-full">
           Tell me what you’d like me to translate or summarize!
         </p>
 
         <select
           value={selectedLang}
           onChange={(e) => setSelectedLang(e.target.value)}
-          className="border-blue-400 border-[0.01rem] p-2 bg-blue-900 text-white rounded mb-2"
+          className="border-blue-400 border-[0.01rem] p-2 bg-blue-900 w-full lg:w-[30%] sm:w-[50%] text-white rounded mb-2"
         >
           <option value="en">English</option>
           <option value="pt">Portuguese</option>
@@ -93,7 +93,7 @@ export default function Home() {
           />
           <button
             onClick={handleTranslate}
-            className="ml-2 bg-blue-700 hover:bg-blue-800 border-[0.01rem] border-blue-400 text-white p-2 rounded"
+            className="ml-2 bg-blue-950 hover:bg-blue-800 border-[0.01rem] border-blue-400 text-white p-2 rounded"
           >
             Translate
           </button>

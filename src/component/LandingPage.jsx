@@ -3,16 +3,16 @@ import { Link } from 'react-router-dom';
 
 export default function LandingPage() {
   return (
-    <div className="font-sans">
+    <div className="font-sans bg-white">
       {/* Navbar */}
       <nav className="bg-blue-600 text-white p-4 flex  justify-between items-center">
-        <h1 className="text-xl font-bold">AI Text Processor</h1>
+        <h1 className="lg:text-xl text-sm font-bold">AI Text Processor</h1>
         <div className="space-x-4 flex flex-row ">
 
           <Link to="/api" className='flex flex-row'>
           <div className='flex flex-row items-center justify-center gap-2 p-2 border-b-blue-200 border-[0.01rem] rounded'>
            
-            <span>Get Started</span>
+            <span className='hidden md:block lg:block'>Get Started</span>
             <FaRocket /> 
           <button className="">
           </button>
