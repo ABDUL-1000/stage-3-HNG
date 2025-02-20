@@ -5,88 +5,99 @@ export default function Home() {
   const [messages, setMessages] = useState([]);
   const [detectedLang, setDetectedLang] = useState("");
   const [selectedLang, setSelectedLang] = useState("fr");
+  const [showChat, setShowChat] = useState(false); // Hide chat initially
 
-  async function handleSend() {
+  async function handleTranslate() {
     if (!inputText.trim()) return;
-    const newMessage = { text: inputText, type: "user" };
-    setMessages([...messages, newMessage]);
+
+    setShowChat(true); // Show chat when translating for the first time
+
+    // Add user message to chat
+    const newMessages = [...messages, { text: inputText, type: "user" }];
+    setMessages(newMessages);
     setInputText("");
-    await detectLanguage(inputText);
+
+    // Detect Language
+    const detected = await detectLanguage(inputText);
+    if (detected) {
+      setDetectedLang(detected);
+      const translatedText = await translateText(inputText, detected, selectedLang);
+      if (translatedText) {
+        setMessages([...newMessages, { text: translatedText, type: "bot" }]); // Add translation to chat
+      }
+    }
   }
 
   async function detectLanguage(text) {
     try {
       const detector = await self.ai.languageDetector.create();
       const results = await detector.detect(text);
-      if (results.length > 0) {
-        setDetectedLang(results[0].detectedLanguage);
-      }
+      return results.length > 0 ? results[0].detectedLanguage : "unknown";
     } catch (error) {
       console.error("Language detection failed", error);
+      return "unknown";
     }
   }
 
-  async function summarizeText(text) {
+  async function translateText(text, sourceLang, targetLang) {
     try {
-      const options = {
-        sharedContext: "This is a general text",
-        type: "key-points",
-        format: "markdown",
-        length: "medium",
-      };
-      const summarizer = await self.ai.summarizer.create(options);
-      const summary = await summarizer.summarize(text);
-      setMessages([...messages, { text: summary, type: "summary" }]);
-    } catch (error) {
-      console.error("Summarization failed", error);
-    }
-  }
-
-  async function translateText(text) {
-    try {
-      const translator = await self.ai.translator.create({
-        sourceLanguage: detectedLang,
-        targetLanguage: selectedLang,
-      });
-      const translatedText = await translator.translate(text);
-      setMessages([...messages, { text: translatedText, type: "translation" }]);
+      const translator = await self.ai.translator.create({ sourceLanguage: sourceLang, targetLanguage: targetLang });
+      return await translator.translate(text);
     } catch (error) {
       console.error("Translation failed", error);
+      return "";
     }
   }
 
   return (
-    <div className="flex flex-col h-screen lg:p-2 rounded-2xl  bg-blue-950">
-      <div className="flex-1 overflow-y-auto border rounded p-2 bg-blue-700">
-        {messages.map((msg, index) => (
-          <div  key={index} className={msg.type === "user" ? "text-right" : "text-left " }>
-            <p className="p-1 bg-blue-500 inline-block md:p-2 lg:p-2  rounded w-[45%] text-[0.8rem] md:text-[1rem] text-justify lg:text-[1.2rem]">{msg.text}</p>
-            {msg.type === "user" && detectedLang && <p className="text-[0.8rem] text-blue-300 p-2 md:p-2 md:text-[1rem] lg:text-[1.2rem ] w-full">Your Language is: {detectedLang}</p>}
-            {msg.type === "user" && msg.text.length > 150 && (
-              <button onClick={() => summarizeText(msg.text)} className="ml-2 bg-blue-500 text-white px-2 py-1 text-[0.6rem] rounded">Summarize</button>
-            )}
-            <div className="flex flex-col gap-1 items-end ">
-            <select value={selectedLang} onChange={(e) => setSelectedLang(e.target.value)} className=" border-blue-400 border-[0.01rem]  md:p-2 md:text-[1rem] lg:text-[1.2rem ] w-[45%] text-blue-50 bg-blue-900 rounded m-1 text-[0.8rem] px-4 ">
-              <option value="en">English</option>
-              <option value="pt">Portuguese</option>
-              <option value="es">Spanish</option>
-              <option value="ru">Russian</option>
-              <option value="tr">Turkish</option>
-              <option value="fr">French</option>
-            </select>
-            <button onClick={() => translateText(msg.text)} className=" bg-blue-700 border-[0.01rem] border-blue-400 text-white hover:bg-blue-400 py-1 w-[45%] m-1   md:p-2 md:text-[1rem] lg:text-[1.2rem ] text-[0.6rem] rounded">Translate</button>
+    <div className="flex flex-col h-screen lg:w-[70%] lg:p-2 rounded-2xl bg-blue-950">
+      {/* Chat Area (Hidden by default) */}
+      {showChat && (
+        <div className="flex-1 overflow-y-auto border rounded p-2 bg-blue-700">
+          {messages.map((msg, index) => (
+            <div key={index} className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"} my-2`}>
+              <p className={`p-2 rounded w-[45%] text-[0.9rem] md:text-[1rem] lg:text-[1.2rem] ${msg.type === "user" ? "bg-blue-500 text-white" : "bg-green-500 text-black"}`}>
+                {msg.text}
+              </p>
             </div>
-          </div>
-        ))}
-      </div>
-      <div className="mt-4  flex">
-        <textarea
-          className="flex-1 p-2 border-[0.01rem] border-blue-400 text-blue-50 rounded"
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          placeholder="Type your text..."
-        />
-        <button onClick={handleSend} className="ml-2 bg-blue-700 hover:bg-blue-800 border-[0.01rem] border-blue-400  text-white p-2 rounded">Send</button>
+          ))}
+        </div>
+      )}
+
+      {/* Input and Translate Button */}
+      <div className="mt-4 flex flex-col items-end">
+        {/* Prompt Text */}
+        <p className="text-blue-300 text-lg mb-2 text-left w-full">
+          Tell me what you’d like me to translate or summarize!
+        </p>
+
+        <select
+          value={selectedLang}
+          onChange={(e) => setSelectedLang(e.target.value)}
+          className="border-blue-400 border-[0.01rem] p-2 bg-blue-900 text-white rounded mb-2"
+        >
+          <option value="en">English</option>
+          <option value="pt">Portuguese</option>
+          <option value="es">Spanish</option>
+          <option value="ru">Russian</option>
+          <option value="tr">Turkish</option>
+          <option value="fr">French</option>
+        </select>
+
+        <div className="flex w-full">
+          <textarea
+            className="flex-1 p-2 border-[0.01rem] border-blue-400 text-blue-50 rounded"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            placeholder="Type your text..."
+          />
+          <button
+            onClick={handleTranslate}
+            className="ml-2 bg-blue-700 hover:bg-blue-800 border-[0.01rem] border-blue-400 text-white p-2 rounded"
+          >
+            Translate
+          </button>
+        </div>
       </div>
     </div>
   );

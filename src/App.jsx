@@ -4,6 +4,9 @@ import Api from "./component/Api";
 
 function App() {
   return (
+    <div className="bg-blue-950 mx-auto lg:flex lg:justify-center lg:items-center">
+
+    
     <Router>
       <Routes>
         {/* Default route */}
@@ -13,6 +16,7 @@ function App() {
         <Route path="/api" element={<Api />} />
       </Routes>
     </Router>
+    </div>
   );
 }
 
