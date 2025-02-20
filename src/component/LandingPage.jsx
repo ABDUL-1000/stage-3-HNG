@@ -5,14 +5,16 @@ export default function LandingPage() {
   return (
     <div className="font-sans">
       {/* Navbar */}
-      <nav className="bg-blue-600 text-white p-4 flex justify-between items-center">
+      <nav className="bg-blue-600 text-white p-4 flex  justify-between items-center">
         <h1 className="text-xl font-bold">AI Text Processor</h1>
-        <div className="space-x-4 flex ">
-          <a href="#about" className="hover:underline">About</a>
-          <Link to="/api">
-          <div className='flex'>
-          <button className="get-started-btn">
-            <FaRocket /> Get Started
+        <div className="space-x-4 flex flex-row ">
+
+          <Link to="/api" className='flex flex-row'>
+          <div className='flex flex-row items-center justify-center gap-2 p-2 border-b-blue-200 border-[0.01rem] rounded'>
+           
+            <span>Get Started</span>
+            <FaRocket /> 
+          <button className="">
           </button>
           </div>
         </Link>
@@ -21,16 +23,19 @@ export default function LandingPage() {
       
       {/* Hero Section */}
       <header className="h-screen bg-gradient-to-r from-blue-500 to-purple-600 text-white flex flex-col items-center justify-center text-center p-6">
-        <h2 className="text-4xl font-bold mb-4">AI-Powered Text Processing</h2>
+        <h2 className="text-4xl font-bold mb-4"> AI-Powered Text Processing</h2>
         <p className="text-lg mb-6 max-w-xl">
           Detect languages, translate text, and summarize content instantly with our AI-driven tool.
         </p>
-        {/* <Link href={"/api"} className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
-       
-        
-          Get Started <FaArrowRight />
-      
-        </Link> */}
+        <Link to="/api" className='flex flex-row'>
+          <div className='flex flex-row items-center justify-center gap-2 p-2 border-b-blue-200 border-[0.01rem] rounded'>
+           
+            <span>Get Started</span>
+            <FaRocket /> 
+          <button className="">
+          </button>
+          </div>
+        </Link>
       </header>
       
       {/* About Section */}

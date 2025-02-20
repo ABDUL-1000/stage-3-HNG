@@ -7,7 +7,7 @@ function App() {
     <Router>
       <Routes>
         {/* Default route */}
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage  />} />
         
         {/* Route for API page */}
         <Route path="/api" element={<Api />} />
